@@ -1,6 +1,7 @@
 const path = require('path');
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
+const swaggerCustom = require('swagger-custom')();
 const { version } = require('../../package.json');
 
 const PORT = process.env.PORT || 7777;
@@ -15,7 +16,7 @@ const swaggerServerUrl =
     ? `http://localhost:${PORT}`
     : 'https://backend.yolnoma.uz');
 
-const options = {
+const swaggerJsdocConfig = {
   definition: {
     openapi: '3.0.3',
 
@@ -56,9 +57,20 @@ const options = {
   ],
 };
 
-const swaggerSpec = swaggerJsdoc(options);
+const swaggerSpec = swaggerJsdoc(swaggerJsdocConfig);
+
+const swaggerUiOptions = {
+  // customCssUrl: swaggerCustom.options.customCssUrl,
+  customJs: swaggerCustom.options.customJs,
+  customSiteTitle: 'Yolnoma API Docs',
+  swaggerOptions: {
+    docExpansion: 'none',
+  },
+};
 
 module.exports = {
   swaggerUi,
   swaggerSpec,
+  swaggerCustom,
+  swaggerUiOptions,
 };

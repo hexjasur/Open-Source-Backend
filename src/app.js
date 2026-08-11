@@ -8,22 +8,17 @@ const permissionRoutes = require('./routes/permissions.route');
 
 const errorHandler = require('./middleware/error.middleware');
 
-const { swaggerUi, swaggerSpec } = require('./swagger');
+const {
+  swaggerUi,
+  swaggerSpec,
+  swaggerCustom,
+  swaggerUiOptions,
+} = require('./swagger');
 
 const app = express();
 
-const corsOptions = {
-  origin: process.env.CORS_ORIGIN
-    ? process.env.CORS_ORIGIN.split(',').map((origin) => origin.trim())
-    : true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
-  credentials: true,
-  optionsSuccessStatus: 200,
-};
-
 app.use(helmet());
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(express.json());
 
 // Optional debug middleware to log CORS-related request/response headers.
@@ -63,7 +58,12 @@ app.use('/api/users', userRoutes);
 
 app.use('/api/permissions', permissionRoutes);
 
-app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/swagger-custom', swaggerCustom.router);
+app.use(
+  '/docs',
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, swaggerUiOptions),
+);
 
 app.use(errorHandler);
 
