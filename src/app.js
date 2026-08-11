@@ -26,6 +26,30 @@ app.use(helmet());
 app.use(cors(corsOptions));
 app.use(express.json());
 
+// Optional debug middleware to log CORS-related request/response headers.
+// Enable by setting DEBUG_CORS=true in the environment (do NOT enable in public prod long-term).
+if (process.env.DEBUG_CORS === 'true') {
+  app.use((req, res, next) => {
+    const origin = req.headers.origin || '<no-origin>';
+    console.log(
+      '[DEBUG_CORS] incoming:',
+      req.method,
+      req.originalUrl,
+      'Origin:',
+      origin,
+    );
+
+    // after response sent log the Access-Control-Allow-Origin header and status
+    res.on('finish', () => {
+      console.log(
+        `[DEBUG_CORS] response: ${req.method} ${req.originalUrl} -> ${res.statusCode} Access-Control-Allow-Origin: ${res.get('Access-Control-Allow-Origin')}`,
+      );
+    });
+
+    next();
+  });
+}
+
 app.get('/', (req, res) => {
   res.json({
     success: true,

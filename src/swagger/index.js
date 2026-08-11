@@ -13,7 +13,7 @@ const swaggerServerUrl =
   process.env.SWAGGER_SERVER_URL ||
   (isDevelopmentMode
     ? `http://localhost:${PORT}`
-    : 'https://backend.yolnoma.uz/docs/');
+    : 'https://backend.yolnoma.uz');
 
 const options = {
   definition: {
@@ -36,10 +36,6 @@ const options = {
         description: isDevelopmentMode
           ? 'Development server'
           : 'Production server',
-      },
-      {
-        url: 'https://backend.yolnoma.uz/docs',
-        description: 'Render production server',
       },
     ],
 

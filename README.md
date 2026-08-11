@@ -9,8 +9,8 @@ Yolnoma backend uses Node.js + Express + MongoDB. Auth is JWT-based and all sens
 - `JWT_REFRESH_SECRET` — secret used to sign refresh JWT tokens
 - `PORT` — optional, default is `7777`
 - `SWAGGER_SERVER_URL` — optional, defaults to `http://localhost:7777`
-- `HOSTING` - `https://yolnoma-app-backend.onrender.com/` 
-- `SWAGGER_SERVER_URL` - `https://yolnoma-app-backend.onrender.com/docs/`
+- `HOSTING` - `https://backend.yolnoma.uz/` 
+- `SWAGGER_SERVER_URL` - `https://backend.yolnoma.uz/docs/`
 
 
 ## Auth endpoints
