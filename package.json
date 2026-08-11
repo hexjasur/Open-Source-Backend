@@ -1,5 +1,5 @@
 {
-  "name": "yolnoma-app-backend",
+  "name": "open-source-backend",
   "version": "1.1.1",
   "description": "Open Source Backend",
   "main": "app.js",
@@ -11,7 +11,7 @@
   "author": "JK Software",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hexjasur/open-source-backend.git"
+    "url": "git+https://github.com/hexjasur/Open-Source-Backend.git"
   },
   "license": "ISC",
   "type": "commonjs",

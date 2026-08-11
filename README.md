@@ -1,101 +1,70 @@
-# Yolnoma Backend API Docs
+# Open-Source-Backend — Modern, secure, and extensible API backend
 
-## Overview
-Yolnoma backend uses Node.js + Express + MongoDB. Auth is JWT-based and all sensitive config is loaded from `.env`.
+Welcome to Open-Source-Backend — a production-ready Node.js backend built for desktop/web apps and Tauri integrations. Fast to start, secure by design, and designed to be customized.
 
-## Required environment variables
-- `MONGO_URI` — MongoDB connection string for the `Yolnoma` database
-- `JWT_SECRET` — secret used to sign access JWT tokens
-- `JWT_REFRESH_SECRET` — secret used to sign refresh JWT tokens
-- `PORT` — optional, default is `7777`
-- `SWAGGER_SERVER_URL` — optional, defaults to `http://localhost:7777`
-- `HOSTING` - `https://backend.yolnoma.uz/` 
-- `SWAGGER_SERVER_URL` - `https://backend.yolnoma.uz/docs/`
+Why you'll love it
+- Clean JWT auth with rotating refresh tokens (access: short-lived, refresh: long-lived)
+- Role-based access controls (owner/admin) and user management API ready
+- Swagger-driven API docs with optional visual customization via `swagger-custom`
+- Minimal, well-structured codebase: Express + Mongoose + modular loaders
 
+Feature highlight — Swagger custom UI
+This project integrates `swagger-custom` to give your API documentation a polished, branded UI. Learn more and star the project:
 
-## Auth endpoints
-### POST /api/auth/login
-- Body: `application/json`
-  - `email` (string)
-  - `password` (string)
-- Success: `200`
-- Response shape:
-  - `success`: `true`
-  - `data.access_token`: short-lived access token (15 min)
-  - `data.refresh_token`: long-lived refresh token (7 days)
-  - `data.user`: user object without `password_hash`
+- https://github.com/hexjasur/swagger-custom
 
-### POST /api/auth/refresh
-- Body: `application/json`
-  - `refresh_token` (string)
-- Success: `200`
-- Response shape:
-  - `success`: `true`
-  - `data.access_token`: new access token
-  - `data.refresh_token`: rotated refresh token
-  - `data.user`: user object
-- Use this endpoint when the access token expires and the refresh token is still valid.
+Quickstart
+1. Copy environment variables:
 
-### GET /api/auth/me
-- Requires header: `Authorization: Bearer <access_token>`
-- Success: `200`
-- Returns current authenticated user
+```bash
+cp .env.example .env
+```
 
-## User endpoints
-### GET /api/users
-- Requires JWT auth
-- Returns user list without passwords
+2. Install dependencies and run:
 
-### GET /api/users/me
-- Requires JWT auth
-- Returns current authenticated user profile
+```bash
+npm install
+npm run dev
+```
 
-### PATCH /api/users/me
-- Requires JWT auth
-- Body: `application/json`
-  - `display_name` (string)
-  - `avatar_url` (string)
-  - `thumbnail_url` (string)
-  - `is_private` (boolean)
-- Updates the logged-in user profile
+3. Open docs and explore the API (local):
 
-### GET /api/users/{id}
-- Requires JWT auth
-- Returns user by id
+http://localhost:7777/docs
 
-### POST /api/users
-- Requires JWT auth
-- Requires role: `owner`
-- Body: `application/json`
-  - `email` (string)
-  - `password` (string)
-  - `role` (`owner` | `admin`)
-  - optional profile fields
+Required environment variables
+- `MONGO_URI` — MongoDB connection string
+- `JWT_SECRET` — secret for access tokens
+- `JWT_REFRESH_SECRET` — secret for refresh tokens
+- `PORT` — optional (default `7777`)
+- `CORS_ORIGIN` — allowed origins (comma-separated)
 
-### PATCH /api/users/{id}
-- Requires JWT auth
-- Requires role: `owner`
-- Updates user by id
+Core endpoints (summary)
+- `POST /api/auth/login` — returns `{ access_token, refresh_token, user }`
+- `POST /api/auth/refresh` — rotate and return new tokens
+- `GET /api/auth/me` — current authenticated user
+- `GET /api/users` — list users (auth)
+- `POST /api/users` — create user (owner only)
 
-### DELETE /api/users/{id}
-- Requires JWT auth
-- Requires role: `owner`
-- Deletes user by id
+Tauri & Desktop integration notes
+- For Tauri apps, call `POST /api/auth/login` and securely store the `refresh_token` and `access_token` in your app. Use the access token for API calls and call `POST /api/auth/refresh` to rotate tokens when needed.
+- Set `CORS_ORIGIN` to your app origin when serving docs or using the UI in-browser.
 
-## Security notes
-- `password_hash` is never returned in API responses.
-- Auth middleware validates `Authorization` header and JWT token.
-- Use HTTPS in production and never expose `MONGO_URI` or `JWT_SECRET` client-side.
+Debugging CORS / Docs
+- If Swagger UI shows "Failed to fetch":
+  - Ensure `src/swagger/index.js` `servers.url` points to your API root (no `/docs` suffix).
+  - Ensure `CORS_ORIGIN` includes the origin shown in the browser `Origin` header.
+  - Temporarily enable `DEBUG_CORS=true` to log request `Origin` and response CORS headers.
 
-## Integration notes for Tauri
-- Login from Tauri should call `POST /api/auth/login` and store the returned JWT locally in the app.
-- For protected requests, send `Authorization: Bearer <token>`.
-- Upload image URLs from Tauri cloud storage and write URL string to `avatar_url` / `thumbnail_url` in user profile.
+Customization & Branding
+- `src/loaders/swagger.js` wires `swagger-custom` and exposes `/swagger-custom` assets. Edit `src/loaders/swagger.js` to change colors, site title, or custom JS/CSS.
 
-## Swagger
-- Swagger UI is available at `/docs`
-- OpenAPI schema is generated from `src/swagger/auth.swagger.js` and `src/swagger/model.swagger.js`
+Contribution
+- Pull requests welcome. Please keep changes small and focused. For large refactors, open an issue first to discuss.
 
-## Recommended improvement
-- Add `refresh token` support for longer sessions.
-- Add `upload` endpoint for profile image metadata if you want server-side validation.
+License
+- MIT — use freely and contribute back ❤️
+
+Repository
+- https://github.com/hexjasur/Open-Source-Backend
+
+Enjoy — if you want, I can add README badges (build, npm version, license) and a short example integration snippet for Tauri or React.
